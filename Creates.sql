@@ -1,0 +1,103 @@
+CREATE TABLE Room (
+	Adress VARCHAR(30) PRIMARY KEY,
+	City VARCHAR(20) NOT NULL,
+	Numb_of_places INT
+);
+
+CREATE TABLE Politician (
+	ID_Politician VARCHAR(10) PRIMARY KEY,
+	Name_ VARCHAR(15) NOT NULL,
+	Surname VARCHAR(20)
+);
+
+CREATE TABLE Party (
+	Name_party VARCHAR(20) PRIMARY KEY,
+	Numb_of_members INT,
+	Manager VARCHAR(30)
+);
+
+CREATE TABLE Guard (
+	Guard_ID VARCHAR(10),
+	Name_ VARCHAR(30),
+	Since DATE,
+	End_ DATE,
+	PRIMARY KEY(Guard_ID,Name_)
+);
+
+CREATE TABLE Politician_cadency (
+	Cadency_ID VARCHAR(10) PRIMARY KEY,
+	Since DATE,
+	End_ DATE,
+	ID_Politician VARCHAR(10) REFERENCES Politician ON DELETE CASCADE,
+	Name_party VARCHAR(20) REFERENCES Party ON DELETE SET NULL
+);
+
+CREATE TABLE Marshal_cadency (
+	Marshal_ID VARCHAR(10) PRIMARY KEY,
+	Name_ VARCHAR(30) NOT NULL,
+	Since DATE,
+	End_ DATE,
+	Name_party VARCHAR(20) REFERENCES Party ON DELETE SET NULL,
+	Cadency_Id VARCHAR(10) REFERENCES Politician_cadency ON DELETE CASCADE
+);
+
+CREATE TABLE Session_ (
+	Session_ID VARCHAR(10) PRIMARY KEY,
+	Date_ DATE NOT NULL,
+	Numb_of_politicians INT,
+	Adress VARCHAR(30) REFERENCES Room ON DELETE CASCADE,
+	Marshal_ID VARCHAR(10) REFERENCES Marshal_cadency ON DELETE CASCADE
+);
+
+CREATE TABLE Act (
+	Act_ID VARCHAR(10) PRIMARY KEY,
+	Domain VARCHAR(20) NOT NULL,
+	Date_ DATE,
+	Session_ID VARCHAR(10) REFERENCES Session_ ON DELETE CASCADE
+
+);
+
+CREATE TABLE Attendance (
+	Attendance_ID VARCHAR(10) PRIMARY KEY,
+	Date_ DATE,
+	Cadency_ID VARCHAR(10) REFERENCES Politician_cadency ON DELETE CASCADE,
+	Session_ID VARCHAR(10) REFERENCES Session_ ON DELETE CASCADE,
+	Adress VARCHAR(30) REFERENCES Room ON DELETE CASCADE
+);
+
+CREATE TABLE Vote (
+	Vote_ID VARCHAR(10) PRIMARY KEY,
+	Type_of_vote VARCHAR(10),
+	Attendace_ID VARCHAR(10) REFERENCES Attendance ON DELETE CASCADE,
+	Act_ID VARCHAR(10) REFERENCES Act ON DELETE CASCADE
+);
+
+CREATE TABLE Protection (
+	Session_ VARCHAR(10) REFERENCES Session_,
+	Gid VARCHAR(10),
+	Gname VARCHAR(30),
+	PRIMARY KEY (Session_, Gid),
+	FOREIGN KEY (Gid,Gname) REFERENCES Guard ON DELETE CASCADE
+
+);
+
+CREATE TABLE Inside (
+	Politician VARCHAR(10) REFERENCES Politician ON DELETE CASCADE,
+	Party VARCHAR(20) REFERENCES Party ON DELETE CASCADE,
+	PRIMARY KEY (Politician, Party)	
+);
+
+ALTER TABLE Session_
+		ADD CONSTRAINT CHK_Session CHECK (Numb_of_politicians<=470);
+
+
+ALTER TABLE Vote
+		ADD CONSTRAINT CHK_Vote CHECK (Type_of_vote='approve' OR Type_of_vote='disapprove' OR Type_of_vote='abstain');
+
+ALTER TABLE Room
+	ADD CONSTRAINT df_City
+	DEFAULT 'Warsaw' FOR City;	
+
+ALTER TABLE Room
+	ADD CONSTRAINT df_places
+	DEFAULT '470' FOR Numb_of_places;

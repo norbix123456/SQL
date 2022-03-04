@@ -1,0 +1,12 @@
+DROP TABLE Inside;
+DROP TABLE Protection;
+DROP TABLE Vote;
+DROP TABLE Attendance;
+DROP TABLE Act;
+DROP TABLE Session_;
+DROP TABLE Marshal_cadency;
+DROP TABLE Politician_cadency;
+DROP TABLE Guard;
+DROP TABLE Party;
+DROP TABLE Politician;
+DROP TABLE Room;
